@@ -1,127 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MedCrypto - Secure Medical Records</title>
+    <title>MedCrypto - Deep Encryption Cloud</title>
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Chart.js for GRP Admin Screen -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="blob blob-3"></div>
+    <!-- Advanced Animated Background Grid -->
+    <div class="bg-grid"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
 
     <div class="container">
-        <!-- Auth View Container -->
+        <!-- Auth View -->
         <main id="auth-view" class="view active">
-            <div class="glass-card auth-card">
+            <div class="pro-card auth-card reveal">
                 <div class="brand">
-                    <div class="brand-icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L3 7V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V7L12 2Z" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9 12.5L11 14.5L15.5 9.5" stroke="url(#paint0_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <div class="brand-hexagon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="brand-icon">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="url(#paint0)" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M2 17L12 22L22 17" stroke="url(#paint0)" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M2 12L12 17L22 12" stroke="url(#paint0)" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
                             <defs>
-                                <linearGradient id="paint0_linear" x1="12" y1="2" x2="12" y2="23" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#00F2FE"/>
-                                    <stop offset="1" stop-color="#4FACFE"/>
+                                <linearGradient id="paint0" x1="2" y1="2" x2="22" y2="22"
+                                    gradientUnits="userSpaceOnUse">
+                                    <stop stop-color="#00F2FE" />
+                                    <stop offset="1" stop-color="#4FACFE" />
                                 </linearGradient>
                             </defs>
                         </svg>
                     </div>
-                    <h1>MedCrypto</h1>
-                    <p>Securing Medical Records with Deep Encryption</p>
+                    <h1>MedCrypto<span class="dot">.</span></h1>
+                    <p>Military-Grade Medical Cloud Storage</p>
                 </div>
 
                 <!-- Login Form -->
                 <div id="login-form" class="form-container active">
-                    <h2>Welcome Back</h2>
+                    <h2 class="stagger-1">System Authentication</h2>
                     <form id="form-login" onsubmit="handleLogin(event)">
-                        <div class="input-group">
-                            <label for="login-name">Full Name</label>
-                            <input type="text" id="login-name" required placeholder="Enter your full name">
+                        <div class="input-group stagger-2">
+                            <label>Identification Name</label>
+                            <input type="text" id="login-name" required placeholder="Enter full name">
                         </div>
-                        <div class="input-group">
-                            <label for="login-password">Password</label>
-                            <input type="password" id="login-password" required placeholder="Enter your password">
+                        <div class="input-group stagger-3">
+                            <label>Security Key (Password)</label>
+                            <input type="password" id="login-password" required placeholder="••••••••">
                         </div>
-                        <div class="input-group">
-                            <label for="login-role">Role</label>
+                        <div class="input-group stagger-4">
+                            <label>Clearance Level (Role)</label>
                             <div class="select-wrapper">
                                 <select id="login-role" required>
-                                    <option value="" disabled selected>Select your role</option>
-                                    <option value="doctor">Doctor</option>
-                                    <option value="patient">Patient</option>
-                                    <option value="admin">Admin</option>
+                                    <option value="" disabled selected>Select clearance</option>
+                                    <option value="doctor">Medical Personnel (Doctor)</option>
+                                    <option value="patient">Civilian (Patient)</option>
+                                    <option value="admin">System Admin</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="button-group">
-                            <button type="submit" class="btn btn-primary">Login</button>
-                            <button type="button" class="btn btn-secondary" onclick="clearForm('form-login')">Clear</button>
+                        <div class="button-group stagger-5">
+                            <button type="submit" class="btn btn-primary">Authenticate</button>
+                            <button type="button" class="btn btn-secondary"
+                                onclick="clearForm('form-login')">Wipe</button>
                         </div>
                     </form>
-                    <p class="switch-prompt">Don't have an account? <span onclick="switchCard('register-form')" class="text-link">Register</span></p>
+                    <p class="switch-prompt stagger-6">No clearance? <span onclick="switchCard('register-form')"
+                            class="text-link">Request Access</span></p>
                 </div>
 
                 <!-- Register Form -->
                 <div id="register-form" class="form-container">
-                    <h2>Create Account</h2>
+                    <h2 class="stagger-1">Request Clearance</h2>
                     <form id="form-register" onsubmit="handleRegister(event)">
-                        <div class="input-group">
-                            <label for="reg-name">Full Name</label>
-                            <input type="text" id="reg-name" required placeholder="Enter your full name">
+                        <div class="input-group stagger-2">
+                            <label>Full Legal Name</label>
+                            <input type="text" id="reg-name" required placeholder="Enter full name">
                         </div>
-                        <div class="input-group">
-                            <label for="reg-password">Password</label>
-                            <input type="password" id="reg-password" required placeholder="Create a strong password">
+                        <div class="input-group stagger-3">
+                            <label>Create Security Key</label>
+                            <input type="password" id="reg-password" required placeholder="Create strong password">
                         </div>
-                        <div class="input-group">
-                            <label for="reg-role">Role</label>
+                        <div class="input-group stagger-4">
+                            <label>Requested Role</label>
                             <div class="select-wrapper">
                                 <select id="reg-role" required>
-                                    <option value="" disabled selected>Select your role</option>
-                                    <option value="doctor">Doctor</option>
+                                    <option value="" disabled selected>Select role</option>
+                                    <option value="doctor">Medical Personnel</option>
                                     <option value="patient">Patient</option>
+                                    <option value="admin">System Admin</option>
                                 </select>
                             </div>
                         </div>
-                        <div class="button-group">
-                            <button type="submit" class="btn btn-primary">Register</button>
-                            <button type="button" class="btn btn-secondary" onclick="clearForm('form-register')">Clear</button>
+                        <div class="button-group stagger-5">
+                            <button type="submit" class="btn btn-primary">Initialize Standard</button>
+                            <button type="button" class="btn btn-secondary"
+                                onclick="clearForm('form-register')">Wipe</button>
                         </div>
                     </form>
-                    <p class="switch-prompt">Already have an account? <span onclick="switchCard('login-form')" class="text-link">Login</span></p>
+                    <p class="switch-prompt stagger-6">Already have clearance? <span onclick="switchCard('login-form')"
+                            class="text-link">Authenticate</span></p>
                 </div>
             </div>
         </main>
 
-        <!-- Dashboard View Container -->
+        <!-- Dashboard View -->
         <main id="dashboard-view" class="view">
-            <nav class="dashboard-nav glass-panel">
+            <nav class="dashboard-nav pro-panel reveal-down">
                 <div class="nav-brand">
-                    <div class="brand-icon small">
-                        <!-- Reused SVG -->
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M12 2L3 7V11C3 16.55 6.84 21.74 12 23C17.16 21.74 21 16.55 21 11V7L12 2Z" stroke="url(#paint1_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <path d="M9 12.5L11 14.5L15.5 9.5" stroke="url(#paint1_linear)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <defs>
-                                <linearGradient id="paint1_linear" x1="12" y1="2" x2="12" y2="23" gradientUnits="userSpaceOnUse">
-                                    <stop stop-color="#00F2FE"/>
-                                    <stop offset="1" stop-color="#4FACFE"/>
-                                </linearGradient>
-                            </defs>
+                    <div class="brand-hexagon small">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="brand-icon">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#00F2FE" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <path d="M2 17L12 22L22 17" stroke="#4FACFE" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
                         </svg>
                     </div>
-                    <span class="nav-title">MedCrypto <span id="user-role-badge" class="badge">Doctor</span></span>
+                    <span class="nav-title">MedCrypto <span id="user-role-badge" class="badge"></span></span>
                 </div>
                 <div class="nav-user">
-                    <span id="nav-user-name">Dr. Smith</span>
-                    <button class="btn btn-icon btn-logout" onclick="logout()" title="Logout">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <span class="pulse-dot"></span>
+                    <span id="nav-user-name" class="user-text"></span>
+                    <button class="btn btn-icon btn-logout" onclick="logout()" title="Secure Disconnect">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
                             <line x1="21" y1="12" x2="9" y2="12"></line>
@@ -133,42 +145,52 @@
             <div class="dashboard-content">
                 <!-- Doctor Dashboard -->
                 <section id="doctor-dashboard" class="dashboard-panel">
-                    <div class="dashboard-header">
+                    <div class="dashboard-header reveal">
                         <h2>Doctor's Blockchain Terminal</h2>
-                        <p>Insert and encrypt patient details for secure cloud storage.</p>
+                        <p>Insert and encrypt patient details for immutable cloud storage.</p>
                     </div>
-                    
+
                     <div class="grid-2">
-                        <div class="glass-card panel-card">
+                        <div class="pro-card panel-card reveal-left">
+                            <div class="card-header-accent"></div>
                             <h3>New Record Entry</h3>
                             <form id="form-patient-record" onsubmit="handleRecordInsertion(event)">
                                 <div class="input-group">
-                                    <label for="record-patient-id">Patient ID</label>
-                                    <input type="text" id="record-patient-id" required placeholder="e.g. PAT-9021">
+                                    <label>Patient ID</label>
+                                    <input type="text" id="record-patient-id" required placeholder="ex. PAT-001">
                                 </div>
                                 <div class="input-group">
-                                    <label for="record-diagnosis">Diagnosis</label>
+                                    <label>Diagnosis</label>
                                     <input type="text" id="record-diagnosis" required placeholder="Diagnosis">
                                 </div>
                                 <div class="input-group">
-                                    <label for="record-notes">Medical Notes</label>
-                                    <textarea id="record-notes" rows="4" required placeholder="Detailed medical observations..."></textarea>
+                                    <label>Medical Observations</label>
+                                    <textarea id="record-notes" rows="4" required
+                                        placeholder="Encrypted notes..."></textarea>
                                 </div>
-                                <button type="submit" class="btn btn-primary full-width" id="btn-encrypt">
-                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="btn-icon"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                                <button type="submit" class="btn btn-primary full-width encrypt-btn" id="btn-encrypt">
+                                    <span class="btn-glow"></span>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" class="btn-icon">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                    </svg>
                                     Execute Deep Encryption & Store
                                 </button>
                             </form>
                         </div>
-                        
-                        <div class="glass-card panel-card blockchain-console">
-                            <h3>Blockchain & Encryption Log</h3>
+
+                        <div class="pro-card panel-card blockchain-console reveal-right">
+                            <h3>Cryptographic Log</h3>
                             <div class="console-output" id="encryption-console">
-                                <div class="console-line system">System ready. Awaiting record insertion...</div>
+                                <div class="console-line system">Kernel Initialized. Secure Socket ready.</div>
                             </div>
                             <div class="encryption-status hidden" id="encryption-status">
-                                <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-                                <span class="status-text" id="status-text">Encrypting data payload...</span>
+                                <div class="hex-grid-loader"></div>
+                                <span class="status-text glow-text" id="status-text">AES-256 Protocol active...</span>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="progress-fill"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -176,9 +198,9 @@
 
                 <!-- Patient Dashboard -->
                 <section id="patient-dashboard" class="dashboard-panel">
-                    <div class="dashboard-header">
+                    <div class="dashboard-header reveal">
                         <h2>My Secure Health Records</h2>
-                        <p>Your medical history, protected by advanced deep encryption.</p>
+                        <p>Your medical history, decrypted exclusively for your keys.</p>
                     </div>
 
                     <div class="records-container" id="patient-records-list">
@@ -186,36 +208,57 @@
                     </div>
                 </section>
 
-                <!-- Admin Dashboard (GRP) -->
+                <!-- Admin Dashboard -->
                 <section id="admin-dashboard" class="dashboard-panel">
-                    <div class="dashboard-header">
+                    <div class="dashboard-header reveal">
                         <h2>System Administrator Console</h2>
-                        <p>Global system metrics and encryption accuracy (GRP).</p>
+                        <p>Global architectural metrics and immutable data viewer.</p>
                     </div>
 
-                    <div class="stats-grid">
-                        <div class="stat-card glass-panel">
-                            <div class="stat-value">99.9%</div>
+                    <div class="stats-grid reveal-up stagger-children">
+                        <div class="stat-card pro-panel">
+                            <div class="stat-value text-gradient">99.9%</div>
                             <div class="stat-label">Encryption Accuracy</div>
                         </div>
-                        <div class="stat-card glass-panel">
-                            <div class="stat-value" id="stat-total-records">0</div>
-                            <div class="stat-label">Immutable Records</div>
+                        <div class="stat-card pro-panel">
+                            <div class="stat-value text-gradient" id="stat-total-records">0</div>
+                            <div class="stat-label">Immutable Blocks</div>
                         </div>
-                        <div class="stat-card glass-panel">
-                            <div class="stat-value">AES-256 + RSA</div>
-                            <div class="stat-label">Deep Encryption Protocol</div>
+                        <div class="stat-card pro-panel">
+                            <div class="stat-value text-gradient">AES-256</div>
+                            <div class="stat-label">Encryption Protocol</div>
                         </div>
-                        <div class="stat-card glass-panel">
-                            <div class="stat-value">12ms</div>
-                            <div class="stat-label">Avg Retrieval Time</div>
+                        <div class="stat-card pro-panel">
+                            <div class="stat-value text-gradient">Active</div>
+                            <div class="stat-label">Cloud Status</div>
                         </div>
                     </div>
 
-                    <div class="glass-card chart-container">
-                        <h3>Encryption Performance & Security Accuracy</h3>
-                        <div class="chart-wrapper">
-                            <canvas id="accuracyChart"></canvas>
+                    <div class="grid-2" style="margin-top: 2rem;">
+                        <div class="pro-card chart-container reveal-left">
+                            <h3>Performance (GRP)</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="accuracyChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="pro-card admin-data-viewer reveal-right">
+                            <h3>Global Record Ledger</h3>
+                            <div class="table-container">
+                                <table class="pro-table" id="admin-records-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>Patient ID</th>
+                                            <th>Hash Fingerprint</th>
+                                            <th>Authorizing MD</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="admin-table-body">
+                                        <!-- JS populates this -->
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -224,8 +267,9 @@
     </div>
 
     <!-- Notification Toast -->
-    <div id="toast" class="toast"></div>
+    <div id="toast" class="pro-toast"></div>
 
     <script src="app.js"></script>
 </body>
+
 </html>

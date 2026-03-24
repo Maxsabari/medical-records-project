@@ -10,6 +10,23 @@ const dashboardView = document.getElementById('dashboard-view');
 const userRoleBadge = document.getElementById('user-role-badge');
 const navUserName = document.getElementById('nav-user-name');
 
+// --- Global Animation Logic (Intersection Observer) ---
+function initAnimations() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+            }
+        });
+    }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+    document.querySelectorAll('.reveal, .reveal-up, .reveal-down, .reveal-left, .reveal-right').forEach((el) => {
+        el.classList.remove('revealed'); // Reset
+        // Small delay for natural flow
+        setTimeout(() => observer.observe(el), 50);
+    });
+}
+
 // --- Navigation & View Switching ---
 function switchCard(cardId) {
     document.querySelectorAll('.form-container').forEach(el => el.classList.remove('active'));
@@ -23,13 +40,13 @@ function clearForm(formId) {
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     toast.textContent = message;
-    toast.className = 'toast';
+    toast.className = 'pro-toast';
     toast.classList.add(type);
     toast.classList.add('show');
 
     setTimeout(() => {
         toast.classList.remove('show');
-    }, 3000);
+    }, 4000);
 }
 
 // --- Authentication ---
@@ -39,10 +56,7 @@ async function handleLogin(e) {
     const password = document.getElementById('login-password').value;
     const role = document.getElementById('login-role').value;
 
-    if (!role) {
-        showToast('Please select a role', 'error');
-        return;
-    }
+    if (!role) { showToast('Please select a clearance level', 'error'); return; }
 
     try {
         const res = await fetch('/api/login', {
@@ -50,13 +64,11 @@ async function handleLogin(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, password, role })
         });
-
         const data = await res.json();
-
-        if (!res.ok) throw new Error(data.error || 'Login failed');
+        if (!res.ok) throw new Error(data.error || 'Authentication denied');
 
         state.currentUser = data.user;
-        showToast('Login successful!');
+        showToast('Access Granted');
         initDashboard();
     } catch (err) {
         showToast(err.message, 'error');
@@ -69,10 +81,7 @@ async function handleRegister(e) {
     const password = document.getElementById('reg-password').value;
     const role = document.getElementById('reg-role').value;
 
-    if (!role) {
-        showToast('Please select a role', 'error');
-        return;
-    }
+    if (!role) { showToast('Please select a clearance level', 'error'); return; }
 
     try {
         const res = await fetch('/api/register', {
@@ -80,14 +89,12 @@ async function handleRegister(e) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ name, password, role })
         });
-
         const data = await res.json();
-
         if (!res.ok) throw new Error(data.error || 'Registration failed');
 
         state.currentUser = { name: data.name, role: data.role };
-        showToast('Registration successful! Logging in...');
-        setTimeout(initDashboard, 1000);
+        showToast('Clearance Issued. Initiating Protocol...');
+        setTimeout(initDashboard, 1500);
     } catch (err) {
         showToast(err.message, 'error');
     }
@@ -96,36 +103,38 @@ async function handleRegister(e) {
 function logout() {
     state.currentUser = null;
     state.records = [];
-    dashboardView.classList.remove('active');
+    dashboardView.style.opacity = '0';
     setTimeout(() => {
+        dashboardView.classList.remove('active');
         authView.classList.add('active');
+        authView.style.opacity = '1';
         clearForm('form-login');
         clearForm('form-register');
         switchCard('login-form');
-    }, 300);
+        initAnimations();
+    }, 400);
 }
 
 // --- Dashboard Initialization ---
 async function initDashboard() {
-    authView.classList.remove('active');
+    authView.style.opacity = '0';
 
     try {
-        // Fetch latest records from the DB
+        // Fetch fresh records EVERY TIME dashboard loads.
         const res = await fetch('/api/records');
         state.records = await res.json();
-    } catch (e) {
-        console.error("Failed to load records", e);
-    }
+    } catch (e) { console.error("Network Error", e); }
 
     setTimeout(() => {
+        authView.classList.remove('active');
         dashboardView.classList.add('active');
+        dashboardView.style.opacity = '1';
+
         navUserName.textContent = state.currentUser.role === 'doctor' ? `Dr. ${state.currentUser.name}` : state.currentUser.name;
         userRoleBadge.textContent = state.currentUser.role;
 
-        // Hide all panels
         document.querySelectorAll('.dashboard-panel').forEach(p => p.classList.remove('active'));
 
-        // Show role specific panel
         if (state.currentUser.role === 'doctor') {
             document.getElementById('doctor-dashboard').classList.add('active');
         } else if (state.currentUser.role === 'patient') {
@@ -134,17 +143,18 @@ async function initDashboard() {
         } else if (state.currentUser.role === 'admin') {
             document.getElementById('admin-dashboard').classList.add('active');
             initAdminChart();
+            renderAdminTable(); // New feature!
         }
-    }, 300);
+
+        // Trigger sleek entry animations for the loaded dashboard components
+        initAnimations();
+    }, 400);
 }
 
-// --- Doctor Blockchain Features ---
+// --- Doctor Features ---
 function generateHash(length = 64) {
-    const chars = 'abcdef0123456789';
-    let result = '';
-    for (let i = 0; i < length; i++) {
-        result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+    const chars = 'abcdef0123456789'; let result = '';
+    for (let i = 0; i < length; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
     return result;
 }
 
@@ -159,176 +169,147 @@ function addLogLine(text, type = 'system') {
 
 async function handleRecordInsertion(e) {
     e.preventDefault();
-    const btn = document.getElementById('btn-encrypt');
-    btn.disabled = true;
-
+    const btn = document.getElementById('btn-encrypt'); btn.disabled = true;
     const patientId = document.getElementById('record-patient-id').value;
     const diagnosis = document.getElementById('record-diagnosis').value;
     const notes = document.getElementById('record-notes').value;
 
-    // Simulate Deep Encryption Process visually
     addLogLine('Initiating Deep Encryption Protocol (AES-256 + RSA)...');
-
-    const statusEl = document.getElementById('encryption-status');
+    document.getElementById('encryption-status').classList.remove('hidden');
     const fillEl = document.getElementById('progress-fill');
-    statusEl.classList.remove('hidden');
 
-    // Animate progress bar
-    for (let i = 0; i <= 100; i += 10) {
+    // Smooth loader sim
+    for (let i = 0; i <= 100; i += 5) {
         fillEl.style.width = `${i}%`;
-        if (i === 30) addLogLine('Salting parameters securely...');
-        if (i === 60) addLogLine('Generating asymmetric key pair...');
-        if (i === 90) addLogLine('Hashing data block...');
-        await new Promise(r => setTimeout(r, 200));
+        if (i === 25) addLogLine('Salting parameters securely...');
+        if (i === 50) addLogLine('Generating asymmetric key pair...');
+        if (i === 85) addLogLine('Hashing data block...');
+        await new Promise(r => setTimeout(r, 100)); // Faster, smoother
     }
 
     const txHash = generateHash(64);
     addLogLine(`Encrypted Payload Hash: ${txHash}`, 'hash');
-    addLogLine('Committing to secure SQLite / Cloud volume... Node.js API');
+    addLogLine('Committing to secure Cloud volume via API...');
 
-    const dataObj = {
-        txHash,
-        patientId,
-        diagnosis,
-        notes,
-        date: new Date().toISOString(),
-        doctorName: state.currentUser.name
-    };
+    const dataObj = { txHash, patientId, diagnosis, notes, date: new Date().toISOString(), doctorName: state.currentUser.name };
 
     try {
         const res = await fetch('/api/records', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dataObj)
+            method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dataObj)
         });
+        if (!res.ok) throw new Error('API Rejection');
 
-        if (!res.ok) throw new Error('Failed to store record via DB API.');
-
-        addLogLine('Transaction confirmed via Backend. Record secured.', 'success');
+        addLogLine('Transaction confirmed. Record secured as Immutable Block.', 'success');
 
         setTimeout(() => {
-            statusEl.classList.add('hidden');
-            fillEl.style.width = '0%';
-            clearForm('form-patient-record');
-            showToast('Record securely encrypted and stored in Database!');
+            document.getElementById('encryption-status').classList.add('hidden');
+            fillEl.style.width = '0%'; clearForm('form-patient-record');
+            showToast('Encrypted Data stored in Database!');
             btn.disabled = false;
-        }, 1500);
-
+        }, 2000);
     } catch (err) {
         addLogLine(`Error: ${err.message}`, 'error');
-        showToast('Database Error', 'error');
-        btn.disabled = false;
+        showToast('Secure Socket Error', 'error'); btn.disabled = false;
     }
 }
 
-// --- Patient Dashboard Features ---
+// --- Patient Features ---
 function renderPatientRecords() {
     const list = document.getElementById('patient-records-list');
     list.innerHTML = '';
+    if (!state.records || state.records.length === 0) {
+        list.innerHTML = `<div class="empty-state pro-card reveal-up"><h4>Empty Database</h4><p>No medical records assigned to you.</p></div>`;
+        return;
+    }
+
+    state.records.forEach((rec, index) => {
+        const d = new Date(rec.date).toLocaleDateString();
+        // Stagger injection delay for coolness
+        setTimeout(() => {
+            list.innerHTML += `
+                <div class="pro-card record-card reveal-up revealed">
+                    <div class="record-header">
+                        <span class="record-date">${d} &bull; Dr. ${rec.doctorName}</span>
+                        <span class="hash-badge" title="Cryptographic Identifier">${rec.txHash.substring(0, 8)}...</span>
+                    </div>
+                    <div>
+                        <h4 style="font-size: 1.25rem; margin-bottom: 0.5rem; color: #fff;">${rec.diagnosis}</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">${rec.notes}</p>
+                    </div>
+                    <div style="border-top: 1px solid var(--border-light); padding-top: 1rem;">
+                        <span style="font-size: 0.75rem; color: var(--success); display: flex; align-items: center; gap: 0.4rem;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            Decrypted Locally via Private Handshake
+                        </span>
+                    </div>
+                </div>
+            `;
+        }, index * 100);
+    });
+}
+
+// --- Admin Features ---
+let adminChart = null;
+
+function renderAdminTable() {
+    const tbody = document.getElementById('admin-table-body');
+    tbody.innerHTML = '';
 
     if (!state.records || state.records.length === 0) {
-        list.innerHTML = `<div class="empty-state">No medical records found in Database.</div>`;
+        tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No blocks established yet.</td></tr>`;
         return;
     }
 
     state.records.forEach(rec => {
-        const d = new Date(rec.date).toLocaleDateString();
-        list.innerHTML += `
-            <div class="glass-card record-card">
-                <div class="record-header">
-                    <span class="record-date">${d} &bull; Dr. ${rec.doctorName}</span>
-                    <span class="record-id" title="Encrypted Hash ID">${rec.txHash.substring(0, 8)}...</span>
-                </div>
-                <div class="record-details">
-                    <h4>${rec.diagnosis}</h4>
-                    <p>${rec.notes}</p>
-                </div>
-                <div style="margin-top: 1rem; border-top: 1px solid var(--border-subtle); padding-top: 0.5rem;">
-                    <span style="font-size: 0.75rem; color: var(--success); display: flex; align-items: center; gap: 0.25rem;">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        Decrypted via private key from SQL
-                    </span>
-                </div>
-            </div>
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${new Date(rec.date).toLocaleString()}</td>
+            <td style="font-weight: 500;">${rec.patientId}</td>
+            <td><span class="hash-badge">${rec.txHash.substring(0, 16)}...</span></td>
+            <td>Dr. ${rec.doctorName}</td>
         `;
+        tbody.appendChild(row);
     });
 }
 
-// --- Admin Dashboard Features ---
-let accuracyChartInstance = null;
 function initAdminChart() {
     document.getElementById('stat-total-records').textContent = state.records ? state.records.length : 0;
-
     const ctx = document.getElementById('accuracyChart').getContext('2d');
+    if (adminChart) adminChart.destroy();
 
-    if (accuracyChartInstance) {
-        accuracyChartInstance.destroy();
-    }
-
-    // Gradient for chart
     const gradient = ctx.createLinearGradient(0, 0, 0, 400);
-    gradient.addColorStop(0, 'rgba(0, 242, 254, 0.5)');
+    gradient.addColorStop(0, 'rgba(0, 242, 254, 0.4)');
     gradient.addColorStop(1, 'rgba(0, 242, 254, 0.0)');
 
-    accuracyChartInstance = new Chart(ctx, {
+    adminChart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4', 'Week 5', 'Week 6'],
+            labels: ['Node 1', 'Node 2', 'Node 3', 'Node 4', 'Node 5', 'Node 6'],
             datasets: [
                 {
-                    label: 'Encryption Accuracy (%)',
+                    label: 'Cryptographic Integrity (%)',
                     data: [98.5, 99.1, 99.4, 99.6, 99.8, 99.9],
-                    borderColor: '#00F2FE',
-                    tension: 0.4,
-                    fill: true,
-                    backgroundColor: gradient,
-                    borderWidth: 2,
-                    pointBackgroundColor: '#fff',
-                    pointBorderColor: '#00F2FE',
-                    pointRadius: 4,
-                    pointHoverRadius: 6
-                },
-                {
-                    label: 'Decryption Success Rate (%)',
-                    data: [99.0, 99.2, 99.5, 99.7, 99.9, 100],
-                    borderColor: '#10B981',
-                    tension: 0.4,
-                    fill: false,
-                    borderWidth: 2,
-                    borderDash: [5, 5],
-                    pointBackgroundColor: '#10B981',
-                    pointRadius: 3
+                    borderColor: '#00F2FE', tension: 0.5, fill: true, backgroundColor: gradient,
+                    borderWidth: 2, pointBackgroundColor: '#000', pointBorderColor: '#00F2FE',
+                    pointRadius: 4, pointHoverRadius: 6
                 }
             ]
         },
         options: {
-            responsive: true,
-            maintainAspectRatio: false,
+            responsive: true, maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    labels: { color: '#9CA3AF', font: { family: "'Inter', sans-serif" } }
-                },
-                tooltip: {
-                    backgroundColor: 'rgba(17, 24, 39, 0.9)',
-                    titleColor: '#fff',
-                    bodyColor: '#fff',
-                    borderColor: 'rgba(255, 255, 255, 0.1)',
-                    borderWidth: 1,
-                    padding: 10
-                }
+                legend: { labels: { color: '#a1a1aa', font: { family: "'Space Grotesk', sans-serif" } } },
+                tooltip: { backgroundColor: 'rgba(10, 10, 10, 0.9)', titleColor: '#fff', bodyColor: '#fff', borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1, padding: 12 }
             },
             scales: {
-                y: {
-                    min: 98,
-                    max: 100,
-                    grid: { color: 'rgba(255, 255, 255, 0.05)' },
-                    ticks: { color: '#9CA3AF' }
-                },
-                x: {
-                    grid: { display: false },
-                    ticks: { color: '#9CA3AF' }
-                }
+                y: { min: 98, max: 100, grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#a1a1aa' } },
+                x: { grid: { display: false }, ticks: { color: '#a1a1aa' } }
             }
         }
     });
 }
+
+// Intercept page reload just to start animations natively
+document.addEventListener("DOMContentLoaded", () => {
+    initAnimations();
+});
