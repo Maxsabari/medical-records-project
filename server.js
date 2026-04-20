@@ -102,6 +102,11 @@ app.get('/api/records', (req, res) => {
     });
 });
 
+// Quick ping endpoint to keep server awake
+app.get('/api/ping', (req, res) => {
+    res.status(200).send('OK');
+});
+
 // Fallback to serve index.html for SPA routing cleanly
 app.use((req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
@@ -109,4 +114,22 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
+    
+    // Self-ping block to keep the Render instance awake
+    const https = require('https');
+    // Replace with your actual Render URL
+    const APP_URL = process.env.RENDER_EXTERNAL_URL || 'https://medcrypto.onrender.com';
+    
+    // Ping every 14 minutes (Render sleeps after 15 mins of inactivity)
+    setInterval(() => {
+        https.get(`${APP_URL}/api/ping`, (resp) => {
+            if (resp.statusCode === 200) {
+                console.log('Self-ping successful: App kept awake.');
+            } else {
+                console.error('Self-ping failed. Status:', resp.statusCode);
+            }
+        }).on('error', (err) => {
+            console.error('Self-ping error:', err.message);
+        });
+    }, 14 * 60 * 1000);
 });
